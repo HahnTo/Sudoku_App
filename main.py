@@ -14,6 +14,5 @@ sudoku_model = SudokuModel()
 sudoku_view.set_grid_values(sudoku_model.unsolved_sudoku)
 
 
-
 # Mainloop starten
 root.mainloop()
