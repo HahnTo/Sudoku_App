@@ -53,7 +53,7 @@ class SudokuView:
         """Fenster Aufbauen"""
         self.root.title("Sudoku App")
         self.root.geometry("600x700")
-        #self.center_window()
+        self.center_window()
         self.create_widgets()
 
 
@@ -70,11 +70,11 @@ class SudokuView:
         window_height = self.root.winfo_height()
 
         # Position berechnen aus den gefundenen Werten
-        x = (screen_width / 2) - (window_width / 2)
-        y = (screen_height / 2) - (window_height / 2)
+        x = int((screen_width / 2) - (window_width / 2))
+        y = int((screen_height / 2) - (window_height / 2))
 
         # Position vom Fenster festlegen
-        self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+        self.root.geometry(f'{window_width}x{window_height}+{x}+{y}')
 
 
     def create_widgets(self):
