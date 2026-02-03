@@ -1,23 +1,35 @@
 # TODO: - Wenn Pause, dann einen Dialog schalten
-#       - Logik hinter eingegebenen Zahlen im Sudoku implementieren
-#           -> Hier mit KI fragen, wie das verbunden wird, braucht
-#              man dazu Controller?
+#       - Startfenster um Spiel zu starten
+#       - Sudoku Generator bauen mit unterschiedlichen Stufen
+#       - Button um es direkt zu lösen, für Tests
 
 import tkinter as tk
+from tkinter import messagebox
 
 
 class SudokuView:
     def __init__(self, root):
         self.root = root
+        self.controller = None
+
 
         #Menu Attribute
         self.menu_frame = tk.Frame(self.root)
-        self.menu_frame.pack()
+        self.menu_frame.pack(fill="x")
 
         # Timer-Attribute
         self.time_elapsed = 0
         self.timer_running = False
         self.timer_id = None
+
+        self.heart_icon = tk.PhotoImage(file="images/Herz.png")
+        self.heart_icon = self.heart_icon.subsample(2, 2)
+        self.heart1_label = tk.Label()
+        self.heart2_label = tk.Label()
+        self.heart3_label = tk.Label()
+
+        self.empty_heart_icon = tk.PhotoImage(file="images/leeres_Herz.png")
+        self.empty_heart_icon = self.empty_heart_icon.subsample(2, 2)
 
         # Buttons mit zugehörigen Icons
         self.start_icon = tk.PhotoImage(file="images/Start.png")
@@ -39,7 +51,7 @@ class SudokuView:
 
         # Grid Attribute
         self.grid_frame = tk.Frame(self.root)
-        self.grid_frame.pack()
+        self.grid_frame.place(anchor="c", relx=.5, rely=.5)
 
         self.entries = []
 
@@ -47,7 +59,9 @@ class SudokuView:
 
         self.start_timer()
 
-
+    def set_controller(self, controller):
+        """Controller setzen"""
+        self.controller = controller
 
     def setup_window(self):
         """Fenster Aufbauen"""
@@ -78,21 +92,39 @@ class SudokuView:
 
 
     def create_widgets(self):
+        self.menu_frame.columnconfigure(0, weight=0)    # Timer
+        self.menu_frame.columnconfigure(1, weight=1)    # Leerer Platz
+        self.menu_frame.columnconfigure(2, weight=0)    # Herzen
+        self.menu_frame.columnconfigure(3, weight=0)    # Herzen
+        self.menu_frame.columnconfigure(4, weight=0)    # Herzen
+        self.menu_frame.columnconfigure(5, weight=1)    # Leerer Platz
+        self.menu_frame.columnconfigure(6, weight=0)    # Pause Button
+        self.menu_frame.columnconfigure(7, weight=0)    # Hilfe Button
 
         self.timer_label = tk.Label(self.menu_frame,
                                     text="00:00:00",
                                     font=("Arial", 16),
                                     background="light grey",
                                     foreground="red")
-        self.timer_label.grid(row=0, column=0, padx=100)
+        self.timer_label.grid(row=0, column=0, sticky="w", padx=10)
+
+        self.heart1_label = tk.Label(self.menu_frame, image=self.heart_icon)
+        self.heart1_label.grid(row=0, column=2, sticky="", padx=10)
+
+        self.heart2_label = tk.Label(self.menu_frame, image=self.heart_icon)
+        self.heart2_label.grid(row=0, column=3, sticky="", padx=10)
+
+        self.heart3_label = tk.Label(self.menu_frame, image=self.heart_icon)
+        self.heart3_label.grid(row=0, column=4, sticky="", padx=10)
+
 
         self.pause_button = tk.Button(self.menu_frame,
                                       image=self.pause_icon,
                                       command=self.toggle_pause)
-        self.pause_button.grid(row=0, column=1, padx=10)
+        self.pause_button.grid(row=0, column=6, sticky="e", padx=10)
 
         self.help_button = tk.Button(self.menu_frame, image=self.help_icon)
-        self.help_button.grid(row=0, column=2)
+        self.help_button.grid(row=0, column=7, sticky="e", padx=10)
 
 
 
@@ -110,13 +142,36 @@ class SudokuView:
                                  font=("Arial", 24, "bold"),
                                  justify="center",
                                  validate="key",
-                                 validatecommand=vcmd)
+                                 validatecommand=vcmd,
+                                 cursor="dot")
                 entry.grid(row=row, column=col,
                            padx=(padx_left, 1),
                            pady=(pady_top, 1))
+
+                entry.bind('<KeyRelease>', self.on_cell_change(row, col))
+
                 row_entries.append(entry)
 
             self.entries.append(row_entries)
+
+    def on_cell_change(self, row, col):
+        """Callback wenn Zelle geändert wird"""
+
+        def callback(event):
+            # entry = self.entries[row][col]
+            entry = event.widget
+
+            if not self.controller.on_cell_changed(row, col, entry.get()):
+                entry.config(bg="red")
+                self.show_fail()
+            else:
+                entry.config(bg="white")
+
+            if self.check_all_filled():
+                self.toggle_pause()
+                self.show_win()
+
+        return callback
 
     def start_timer(self):
         if not self.timer_running:
@@ -169,3 +224,34 @@ class SudokuView:
 
                 if sudoku[i][j] != 0:
                     self.entries[i][j].insert(0, str(sudoku[i][j]))
+                    self.entries[i][j].config(bg="lightgrey",
+                                              state="readonly")
+                else:
+                    self.entries[i][j].insert(0, "")
+
+    def loose_life(self, lives):
+        if lives == 2:
+            self.heart1_label.config(image=self.empty_heart_icon)
+        elif lives == 1:
+            self.heart2_label.config(image=self.empty_heart_icon)
+        elif lives == 0:
+            self.heart3_label.config(image=self.empty_heart_icon)
+            self.show_loose()
+
+    def check_all_filled(self):
+        """Prüft ob alle Felder ausgefüllt sind"""
+        for row in self.entries:
+            for entry in row:
+                if entry.get() == "":
+                    return False
+        return True
+
+    def show_fail(self):
+        tk.messagebox.showerror("Das war leider falsch...")
+
+    def show_loose(self):
+        tk.messagebox.showerror("Du hast leider verloren")
+
+    def show_win(self):
+        tk.messagebox.showinfo("Du hast das Sudoku gelöst! Herzlichen Glückwunsch")
+
