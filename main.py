@@ -14,7 +14,7 @@ sudoku_model = SudokuModel()
 
 sudoku_controller = SudokuController(sudoku_model, sudoku_view)
 
-sudoku_view.set_grid_values(sudoku_model.unsolved_sudoku)
+#sudoku_view.set_grid_values(sudoku_model.unsolved_sudoku)
 
 
 

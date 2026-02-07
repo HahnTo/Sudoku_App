@@ -12,10 +12,15 @@ class SudokuView:
         self.root = root
         self.controller = None
 
+        self.setup_window()
 
-        #Menu Attribute
-        self.menu_frame = tk.Frame(self.root)
-        self.menu_frame.pack(fill="x")
+        self.current_frame = None
+
+        # Alle Attribute für Start Frame
+
+
+
+        # Alle Attribute für Game Frame
 
         # Timer-Attribute
         self.time_elapsed = 0
@@ -49,15 +54,10 @@ class SudokuView:
         self.help_button = tk.Button()
 
 
-        # Grid Attribute
-        self.grid_frame = tk.Frame(self.root)
-        self.grid_frame.place(anchor="c", relx=.5, rely=.5)
-
         self.entries = []
 
-        self.setup_window()
-
-        self.start_timer()
+        self.show_start_frame()
+        #self.show_game_frame()
 
     def set_controller(self, controller):
         """Controller setzen"""
@@ -68,7 +68,6 @@ class SudokuView:
         self.root.title("Sudoku App")
         self.root.geometry("600x700")
         self.center_window()
-        self.create_widgets()
 
 
     def center_window(self):
@@ -90,46 +89,68 @@ class SudokuView:
         # Position vom Fenster festlegen
         self.root.geometry(f'{window_width}x{window_height}+{x}+{y}')
 
+    def show_start_frame(self):
+        if self.current_frame:
+            self.current_frame.destroy()
 
-    def create_widgets(self):
-        self.menu_frame.columnconfigure(0, weight=0)    # Timer
-        self.menu_frame.columnconfigure(1, weight=1)    # Leerer Platz
-        self.menu_frame.columnconfigure(2, weight=0)    # Herzen
-        self.menu_frame.columnconfigure(3, weight=0)    # Herzen
-        self.menu_frame.columnconfigure(4, weight=0)    # Herzen
-        self.menu_frame.columnconfigure(5, weight=1)    # Leerer Platz
-        self.menu_frame.columnconfigure(6, weight=0)    # Pause Button
-        self.menu_frame.columnconfigure(7, weight=0)    # Hilfe Button
+        self.current_frame = tk.Frame(self.root)
+        self.current_frame.pack(fill="both", expand=True)
 
-        self.timer_label = tk.Label(self.menu_frame,
+        tk.Label(self.current_frame, text="Test").pack()
+        tk.Button(self.current_frame, text="switch frame",
+                  command=self.show_game_frame).pack()
+
+    def show_game_frame(self):
+        if self.current_frame:
+            self.current_frame.destroy()
+
+        self.current_frame = tk.Frame(self.root)
+        self.current_frame.pack(fill="both", expand=True)
+
+        menu_frame = tk.Frame(self.current_frame)
+        menu_frame.pack(fill="x")
+
+        grid_frame = tk.Frame(self.current_frame)
+        grid_frame.place(anchor="c", relx=.5, rely=.5)
+
+
+        menu_frame.columnconfigure(0, weight=0)    # Timer
+        menu_frame.columnconfigure(1, weight=1)    # Leerer Platz
+        menu_frame.columnconfigure(2, weight=0)    # Herzen
+        menu_frame.columnconfigure(3, weight=0)    # Herzen
+        menu_frame.columnconfigure(4, weight=0)    # Herzen
+        menu_frame.columnconfigure(5, weight=1)    # Leerer Platz
+        menu_frame.columnconfigure(6, weight=0)    # Pause Button
+        menu_frame.columnconfigure(7, weight=0)    # Hilfe Button
+
+        self.timer_label = tk.Label(menu_frame,
                                     text="00:00:00",
                                     font=("Arial", 16),
                                     background="light grey",
                                     foreground="red")
         self.timer_label.grid(row=0, column=0, sticky="w", padx=10)
 
-        self.heart1_label = tk.Label(self.menu_frame, image=self.heart_icon)
+        self.heart1_label = tk.Label(menu_frame, image=self.heart_icon)
         self.heart1_label.grid(row=0, column=2, sticky="", padx=10)
 
-        self.heart2_label = tk.Label(self.menu_frame, image=self.heart_icon)
+        self.heart2_label = tk.Label(menu_frame, image=self.heart_icon)
         self.heart2_label.grid(row=0, column=3, sticky="", padx=10)
 
-        self.heart3_label = tk.Label(self.menu_frame, image=self.heart_icon)
+        self.heart3_label = tk.Label(menu_frame, image=self.heart_icon)
         self.heart3_label.grid(row=0, column=4, sticky="", padx=10)
 
 
-        self.pause_button = tk.Button(self.menu_frame,
+        self.pause_button = tk.Button(menu_frame,
                                       image=self.pause_icon,
                                       command=self.toggle_pause)
         self.pause_button.grid(row=0, column=6, sticky="e", padx=10)
 
-        self.help_button = tk.Button(self.menu_frame, image=self.help_icon)
+        self.help_button = tk.Button(menu_frame, image=self.help_icon)
         self.help_button.grid(row=0, column=7, sticky="e", padx=10)
 
 
 
         vcmd = (self.root.register(self.validate_entry), '%P')
-
         # Grid erstellen
         for row in range(9):
             row_entries = []
@@ -137,7 +158,7 @@ class SudokuView:
                 padx_left = 10 if col % 3 == 0 else 2
                 pady_top = 10 if row % 3 == 0 else 2
 
-                entry = tk.Entry(self.grid_frame,
+                entry = tk.Entry(grid_frame,
                                  width=2,
                                  font=("Arial", 24, "bold"),
                                  justify="center",
@@ -152,7 +173,10 @@ class SudokuView:
 
                 row_entries.append(entry)
 
+
             self.entries.append(row_entries)
+        self.set_grid_values()
+        self.start_timer()
 
     def on_cell_change(self, row, col):
         """Callback wenn Zelle geändert wird"""
@@ -164,6 +188,9 @@ class SudokuView:
             if not self.controller.on_cell_changed(row, col, entry.get()):
                 entry.config(bg="red")
                 self.show_fail()
+                entry.delete(0, tk.END)
+                entry.insert(0, "")
+                entry.config(bg="white")
             else:
                 entry.config(bg="white")
 
@@ -217,7 +244,8 @@ class SudokuView:
         return False
 
 
-    def set_grid_values(self, sudoku):
+    def set_grid_values(self):
+        sudoku = self.controller.get_unsolved_sudoku()
         for i in range(9):
             for j in range(9):
                 self.entries[i][j].delete(0, tk.END)
@@ -254,4 +282,3 @@ class SudokuView:
 
     def show_win(self):
         tk.messagebox.showinfo("Du hast das Sudoku gelöst! Herzlichen Glückwunsch")
-

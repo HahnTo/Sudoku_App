@@ -6,12 +6,6 @@ class SudokuController:
         # View kennt Controller
         self.view.set_controller(self)
 
-    def validate_input(self, row, col, number):
-        """
-        Validiert Benutzereingabe
-        Returns: True wenn Eingabe erlaubt, False sonst
-        """
-
 
     def on_cell_changed(self, row, col, value):
         """Wird aufgerufen, wenn User eine Zahl eingibt"""
@@ -24,3 +18,6 @@ class SudokuController:
             lives = self.model.remove_life()
             self.view.loose_life(lives)
             return False
+
+    def get_unsolved_sudoku(self):
+        return self.model.unsolved_sudoku
