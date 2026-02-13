@@ -1,7 +1,7 @@
 # TODO: - Wenn Pause, dann einen Dialog schalten
-#       - Startfenster um Spiel zu starten
-#       - Sudoku Generator bauen mit unterschiedlichen Stufen
+#       - Sudoku Generator bauen mit unterschiedlichen Stufen, wird durch difficulty übergeben
 #       - Button um es direkt zu lösen, für Tests
+#       - Hilfe Button erstellen
 
 import tkinter as tk
 from tkinter import messagebox
@@ -96,11 +96,17 @@ class SudokuView:
         self.current_frame = tk.Frame(self.root)
         self.current_frame.pack(fill="both", expand=True)
 
-        tk.Label(self.current_frame, text="Test").pack()
-        tk.Button(self.current_frame, text="switch frame",
-                  command=self.show_game_frame).pack()
+        tk.Label(self.current_frame,
+                 text="Sudoku",
+                 font=("Arial",40)).pack()
+        tk.Button(self.current_frame, text="Leicht", width=12,
+                  command=lambda: self.show_game_frame(difficulty=1)).pack()
+        tk.Button(self.current_frame, text="Mittel", width=12,
+                  command=lambda: self.show_game_frame(difficulty=2)).pack()
+        tk.Button(self.current_frame, text="Schwer", width=12,
+                  command=lambda: self.show_game_frame(difficulty=3)).pack()
 
-    def show_game_frame(self):
+    def show_game_frame(self, difficulty):
         if self.current_frame:
             self.current_frame.destroy()
 
@@ -175,7 +181,7 @@ class SudokuView:
 
 
             self.entries.append(row_entries)
-        self.set_grid_values()
+        self.set_grid_values(difficulty)
         self.start_timer()
 
     def on_cell_change(self, row, col):
@@ -244,8 +250,13 @@ class SudokuView:
         return False
 
 
-    def set_grid_values(self):
-        sudoku = self.controller.get_unsolved_sudoku()
+    def set_grid_values(self, difficulty):
+        #sudoku = self.controller.get_unsolved_sudoku()
+        sudoku = self.controller.get_new_sudoku(difficulty)
+        if sudoku is None:
+            tk.messagebox.showerror("Fehler", "Die Erstellung eines neuen Sudokus ist leider fehlgeschlagen.\nJetzt wird das gespeicherte geladen.")
+            sudoku = self.controller.get_unsolved_sudoku()
+
         for i in range(9):
             for j in range(9):
                 self.entries[i][j].delete(0, tk.END)
@@ -278,7 +289,7 @@ class SudokuView:
         tk.messagebox.showerror("Das war leider falsch...")
 
     def show_loose(self):
-        tk.messagebox.showerror("Du hast leider verloren")
+        tk.messagebox.showerror("Du hast leider verloren", "Loooooser")
 
     def show_win(self):
         tk.messagebox.showinfo("Du hast das Sudoku gelöst! Herzlichen Glückwunsch")

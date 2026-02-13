@@ -12,6 +12,7 @@ class SudokuController:
         number = int(value) if value else 0
 
         sudoku = self.model.sudoku
+        self.model.print_sudoku(sudoku)
         if sudoku[row][col] == number or number == 0:
             return True
         else:
@@ -21,3 +22,6 @@ class SudokuController:
 
     def get_unsolved_sudoku(self):
         return self.model.unsolved_sudoku
+
+    def get_new_sudoku(self, difficulty):
+        return self.model.create_sudoku(difficulty)
