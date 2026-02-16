@@ -10,6 +10,7 @@ from tkinter import messagebox
 class SudokuView:
     def __init__(self, root):
         self.root = root
+
         self.controller = None
 
         self.setup_window()
@@ -65,7 +66,7 @@ class SudokuView:
 
     def setup_window(self):
         """Fenster Aufbauen"""
-        self.root.title("Sudoku App")
+        self.root.title("MySudoku")
         self.root.geometry("600x700")
         self.center_window()
 
@@ -93,18 +94,38 @@ class SudokuView:
         if self.current_frame:
             self.current_frame.destroy()
 
-        self.current_frame = tk.Frame(self.root)
-        self.current_frame.pack(fill="both", expand=True)
+        self.root.rowconfigure(0, weight=1)
+        self.root.columnconfigure(0, weight=1)
 
-        tk.Label(self.current_frame,
+        self.current_frame = tk.Frame(self.root)
+        self.current_frame.grid(column=0, row=0, sticky="nsew")
+
+        self.current_frame.rowconfigure(0, weight=1)
+        self.current_frame.rowconfigure(1, weight=0)
+        self.current_frame.rowconfigure(2, weight=0)
+        self.current_frame.rowconfigure(3, weight=0)
+        self.current_frame.rowconfigure(4, weight=1)
+
+        self.current_frame.columnconfigure(0, weight=1)
+        self.current_frame.columnconfigure(1, weight=0)
+        self.current_frame.columnconfigure(2, weight=1)
+
+        sudoku_label = tk.Label(self.current_frame,
                  text="Sudoku",
-                 font=("Arial",40)).pack()
+                 font=("Arial",40))
+
+        menu_icon = tk.Button(self.current_frame,
+                              text="Menu")
+
+        sudoku_label.grid(column=1, row=0, pady=20)  # Abstand oben und unten
+        menu_icon.grid(column=2, row=0, sticky="ne", padx=10, pady=10)  # Rechts oben
+
         tk.Button(self.current_frame, text="Leicht", width=12,
-                  command=lambda: self.show_game_frame(difficulty=1)).pack()
+                  command=lambda: self.show_game_frame(difficulty=1)).grid(column=1, row=1, pady=10)
         tk.Button(self.current_frame, text="Mittel", width=12,
-                  command=lambda: self.show_game_frame(difficulty=2)).pack()
+                  command=lambda: self.show_game_frame(difficulty=2)).grid(column=1, row=2, pady=10)
         tk.Button(self.current_frame, text="Schwer", width=12,
-                  command=lambda: self.show_game_frame(difficulty=3)).pack()
+                  command=lambda: self.show_game_frame(difficulty=3)).grid(column=1, row=3, pady=10)
 
     def show_game_frame(self, difficulty):
         if self.current_frame:
