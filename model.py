@@ -9,6 +9,7 @@ class SudokuModel:
         self.read_sudoku('sudoku.txt')
 
         self._lives = 3
+        self._tips = 3
 
         # Unsolved Sudoku für die Ausgabe in der GUI, _sudoku ist die "Lösung"
         self._unsolved_sudoku = copy.deepcopy(self._sudoku)
@@ -84,6 +85,8 @@ class SudokuModel:
     # Mittel: zwischen 35 und 40
     # Schwer: zwischen 45 und 50
     def create_sudoku(self, difficulty):
+        self._lives = 3
+        self._tips = 3
         new_sudoku = [[0 for _ in range(9)]for _ in range(9)]
         number_of_blank_fields = 0
 
@@ -141,6 +144,27 @@ class SudokuModel:
 
             sudoku[i][j] = 0
         return sudoku
+
+    @property
+    def lives(self):
+        return self._lives
+
+    @lives.setter
+    def lives(self, value):
+        self._lives = value
+
+    @property
+    def tips(self):
+        return self._tips
+
+    @tips.setter
+    def tips(self, value):
+        self._tips = value
+
+    def use_tip(self):
+        if self._tips > 0:
+            self._tips -= 1
+        return self._tips
 
     @property
     def unsolved_sudoku(self):

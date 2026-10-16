@@ -25,3 +25,21 @@ class SudokuController:
 
     def get_new_sudoku(self, difficulty):
         return self.model.create_sudoku(difficulty)
+
+    def get_lives(self):
+        return self.model.lives
+
+    def set_lives(self, lives):
+        self.model.lives = lives
+
+    def get_tips(self):
+        return self.model.tips
+
+    def set_tips(self, tips):
+        self.model.tips = tips
+
+    def use_tip(self):
+        return self.model.use_tip()
+
+    def get_cell_value(self, row, col):
+        return self.model.sudoku[row][col]
