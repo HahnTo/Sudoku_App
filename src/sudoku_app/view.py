@@ -3,6 +3,8 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import messagebox
 
+from .difficulty import Difficulty
+
 BASE_DIR = Path(__file__).resolve().parent
 
 
@@ -117,12 +119,11 @@ class SudokuView:
                       command=self.resume_game).grid(column=1, row=button_row, pady=10)
             button_row += 1
 
-        tk.Button(self.current_frame, text="Leicht", width=12,
-                  command=lambda: self.show_game_frame(difficulty=1)).grid(column=1, row=button_row, pady=10)
-        tk.Button(self.current_frame, text="Mittel", width=12,
-                  command=lambda: self.show_game_frame(difficulty=2)).grid(column=1, row=button_row + 1, pady=10)
-        tk.Button(self.current_frame, text="Schwer", width=12,
-                  command=lambda: self.show_game_frame(difficulty=3)).grid(column=1, row=button_row + 2, pady=10)
+        for difficulty in Difficulty:
+            tk.Button(self.current_frame, text=difficulty.label, width=12,
+                      command=lambda d=difficulty: self.show_game_frame(difficulty=d)
+                      ).grid(column=1, row=button_row, pady=10)
+            button_row += 1
 
     def show_game_frame(self, difficulty):
         # Ein neues Spiel verwirft den alten Spielstand

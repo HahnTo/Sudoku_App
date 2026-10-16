@@ -4,13 +4,14 @@ import pytest
 
 from helpers import (SOLVED, button_by_text, button_texts, dialogs_of,
                      find_empty_cell, grid_values, press_key)
+from sudoku_app.difficulty import Difficulty
 
 
 def wrong_value(correct):
     return str(correct % 9 + 1)
 
 
-def start_game(app, difficulty=1):
+def start_game(app, difficulty=Difficulty.EASY):
     app.view.show_game_frame(difficulty)
     app.root.update()
 
@@ -403,7 +404,7 @@ class TestFallback:
         monkeypatch.setattr(app.controller, "get_new_sudoku", lambda difficulty: None)
         monkeypatch.setattr(app.controller, "get_unsolved_sudoku", lambda: fallback)
 
-        app.view.show_game_frame(1)
+        app.view.show_game_frame(Difficulty.EASY)
         app.root.update()
 
         assert "error" in app.messages

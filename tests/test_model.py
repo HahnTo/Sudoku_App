@@ -3,6 +3,7 @@ import copy
 import pytest
 
 from helpers import SOLVED
+from sudoku_app.difficulty import Difficulty
 from sudoku_app.model import SudokuModel
 
 
@@ -120,25 +121,21 @@ class TestGenerator:
         assert all(value != 0 for row in grid for value in row)
         assert model.is_valid(grid)
 
-    @pytest.mark.parametrize("difficulty, minimum, maximum", [
-        (1, 20, 30),
-        (2, 35, 40),
-        (3, 45, 50),
-    ])
-    def test_leerstellen_pro_schwierigkeit(self, model, difficulty, minimum, maximum):
+    @pytest.mark.parametrize("difficulty", list(Difficulty))
+    def test_leerstellen_pro_schwierigkeit(self, model, difficulty):
         puzzle = model.create_sudoku(difficulty)
         blanks = sum(row.count(0) for row in puzzle)
-        assert minimum <= blanks <= maximum
+        assert difficulty.min_blanks <= blanks <= difficulty.max_blanks
         assert len(puzzle) == 9
         assert all(len(row) == 9 for row in puzzle)
 
     def test_loesung_ist_komplett_und_valid(self, model):
-        model.create_sudoku(1)
+        model.create_sudoku(Difficulty.EASY)
         assert all(value != 0 for row in model.sudoku for value in row)
         assert model.is_valid(model.sudoku)
 
     def test_puzzle_passt_zur_loesung(self, model):
-        puzzle = model.create_sudoku(2)
+        puzzle = model.create_sudoku(Difficulty.MEDIUM)
         for i in range(9):
             for j in range(9):
                 assert puzzle[i][j] in (0, model.sudoku[i][j])
@@ -147,13 +144,13 @@ class TestGenerator:
         model.remove_life()
         model.remove_life()
         model.use_tip()
-        model.create_sudoku(1)
+        model.create_sudoku(Difficulty.EASY)
         assert model.lives == 3
         assert model.tips == 3
 
-    def test_unbekannte_schwierigkeit_erzeugt_keine_leerstellen(self, model):
-        puzzle = model.create_sudoku(99)
-        assert sum(row.count(0) for row in puzzle) == 0
+    def test_magic_number_wird_nicht_mehr_akzeptiert(self, model):
+        with pytest.raises(AttributeError):
+            model.create_sudoku(99)
 
 
 class TestLebenUndTipps:

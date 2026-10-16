@@ -1,6 +1,7 @@
 import pytest
 
 from sudoku_app.controller import SudokuController
+from sudoku_app.difficulty import Difficulty
 from sudoku_app.model import SudokuModel
 
 
@@ -100,6 +101,6 @@ class TestZugriffe:
 
     def test_get_new_sudoku(self, setup):
         controller, model, view = setup
-        puzzle = controller.get_new_sudoku(1)
+        puzzle = controller.get_new_sudoku(Difficulty.EASY)
         assert 20 <= sum(row.count(0) for row in puzzle) <= 30
         assert all(value != 0 for row in model.sudoku for value in row)
