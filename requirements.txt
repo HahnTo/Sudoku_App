@@ -1,0 +1,9 @@
+# Sudoku-App - Abhängigkeiten
+#
+# LAUFZEIT: Die App braucht KEINE externen Pakete - nur die Python-Standardbibliothek
+# inklusive tkinter (unter Linux ggf. nachinstallieren: sudo apt install python3-tk).
+# Start:  python main.py
+#
+# Die folgenden Pakete sind nur zum Testen bzw. für den PyInstaller-Build nötig:
+pytest==9.1.1
+pyinstaller==6.18.0
