@@ -1,12 +1,15 @@
 import copy
 import random
+from pathlib import Path
+
+DEFAULT_SUDOKU_FILE = Path(__file__).resolve().parent / "sudoku.txt"
 
 
 class SudokuModel:
 
-    def __init__(self):
+    def __init__(self, sudoku_file=DEFAULT_SUDOKU_FILE):
         self._sudoku = []
-        self.read_sudoku('sudoku.txt')
+        self.read_sudoku(sudoku_file)
 
         self._lives = 3
         self._tips = 3
@@ -19,14 +22,14 @@ class SudokuModel:
             self.print_sudoku(self._sudoku)
 
     def read_sudoku(self, file):
-        sudoku_file =  open(file, 'r')
         sudoku = []
-        for zeile in sudoku_file:
-            row = []
-            for number in zeile:
-                if number.isdigit():
-                    row.append(int(number))
-            sudoku.append(row)
+        with open(file, 'r') as sudoku_file:
+            for zeile in sudoku_file:
+                row = []
+                for number in zeile:
+                    if number.isdigit():
+                        row.append(int(number))
+                sudoku.append(row)
         self._sudoku = sudoku
 
     def print_sudoku(self, sudoku):

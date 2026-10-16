@@ -1,6 +1,9 @@
 import random
 import tkinter as tk
+from pathlib import Path
 from tkinter import messagebox
+
+BASE_DIR = Path(__file__).resolve().parent
 
 
 class SudokuView:
@@ -20,21 +23,21 @@ class SudokuView:
         self.timer_id = None
 
         # Labels, Buttons und Bilder laden
-        self.heart_icon = tk.PhotoImage(file="images/Herz.png")
+        self.heart_icon = tk.PhotoImage(file=str(BASE_DIR / "images" / "Herz.png"))
         self.heart_icon = self.heart_icon.subsample(2, 2)
         self.heart1_label = tk.Label()
         self.heart2_label = tk.Label()
         self.heart3_label = tk.Label()
 
-        self.empty_heart_icon = tk.PhotoImage(file="images/leeres_Herz.png")
+        self.empty_heart_icon = tk.PhotoImage(file=str(BASE_DIR / "images" / "leeres_Herz.png"))
         self.empty_heart_icon = self.empty_heart_icon.subsample(2, 2)
 
-        self.start_icon = tk.PhotoImage(file="images/Start.png")
+        self.start_icon = tk.PhotoImage(file=str(BASE_DIR / "images" / "Start.png"))
         self.start_icon = self.start_icon.subsample(2, 2)
-        self.pause_icon = tk.PhotoImage(file="images/Pause.png")
+        self.pause_icon = tk.PhotoImage(file=str(BASE_DIR / "images" / "Pause.png"))
         self.pause_icon = self.pause_icon.subsample(2, 2)
 
-        self.help_icon = tk.PhotoImage(file="images/Tipps.png")
+        self.help_icon = tk.PhotoImage(file=str(BASE_DIR / "images" / "Tipps.png"))
         self.help_icon = self.help_icon.subsample(2, 2)
 
         self.timer_label = tk.Label()
@@ -125,6 +128,7 @@ class SudokuView:
 
     def show_game_frame(self, difficulty):
         # Ein neues Spiel verwirft den alten Spielstand
+        self.stop_timer()
         self.saved_game = None
         self.time_elapsed = 0
 
