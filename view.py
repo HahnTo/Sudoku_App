@@ -1,6 +1,4 @@
 # TODO: - Wenn Pause, dann einen Dialog schalten
-#       - Sudoku Generator bauen mit unterschiedlichen Stufen, wird durch difficulty übergeben
-#       - Button um es direkt zu lösen, für Tests
 #       - Hilfe Button erstellen
 
 import tkinter as tk
@@ -17,17 +15,13 @@ class SudokuView:
 
         self.current_frame = None
 
-        # Alle Attribute für Start Frame
-
-
-
-        # Alle Attribute für Game Frame
 
         # Timer-Attribute
         self.time_elapsed = 0
         self.timer_running = False
         self.timer_id = None
 
+        # Labels, Buttons und Bilder laden
         self.heart_icon = tk.PhotoImage(file="images/Herz.png")
         self.heart_icon = self.heart_icon.subsample(2, 2)
         self.heart1_label = tk.Label()
@@ -37,28 +31,25 @@ class SudokuView:
         self.empty_heart_icon = tk.PhotoImage(file="images/leeres_Herz.png")
         self.empty_heart_icon = self.empty_heart_icon.subsample(2, 2)
 
-        # Buttons mit zugehörigen Icons
         self.start_icon = tk.PhotoImage(file="images/Start.png")
         self.start_icon = self.start_icon.subsample(2, 2)
         self.pause_icon = tk.PhotoImage(file="images/Pause.png")
         self.pause_icon = self.pause_icon.subsample(2, 2)
 
-        self.pause_button = tk.Button()
-
-        # Timer Label
-        self.timer_label = tk.Label()
-
-
         self.help_icon = tk.PhotoImage(file="images/Tipps.png")
         self.help_icon = self.help_icon.subsample(2, 2)
+
+        self.timer_label = tk.Label()
+
+        self.pause_button = tk.Button()
 
         self.help_button = tk.Button()
 
 
         self.entries = []
 
+        # Nach fertigem Setup den Start screen zeigen
         self.show_start_frame()
-        #self.show_game_frame()
 
     def set_controller(self, controller):
         """Controller setzen"""
@@ -72,6 +63,7 @@ class SudokuView:
 
 
     def center_window(self):
+        """Das Fenster zentrieren"""
         #Fenstergröße aktualisieren
         self.root.update_idletasks()
 
@@ -83,7 +75,7 @@ class SudokuView:
         window_width = self.root.winfo_width()
         window_height = self.root.winfo_height()
 
-        # Position berechnen aus den gefundenen Werten
+        # Position aus den gefundenen Werten berechnen
         x = int((screen_width / 2) - (window_width / 2))
         y = int((screen_height / 2) - (window_height / 2))
 
@@ -114,11 +106,7 @@ class SudokuView:
                  text="Sudoku",
                  font=("Arial",40))
 
-        menu_icon = tk.Button(self.current_frame,
-                              text="Menu")
-
         sudoku_label.grid(column=1, row=0, pady=20)  # Abstand oben und unten
-        menu_icon.grid(column=2, row=0, sticky="ne", padx=10, pady=10)  # Rechts oben
 
         tk.Button(self.current_frame, text="Leicht", width=12,
                   command=lambda: self.show_game_frame(difficulty=1)).grid(column=1, row=1, pady=10)
@@ -138,7 +126,7 @@ class SudokuView:
         menu_frame.pack(fill="x")
 
         grid_frame = tk.Frame(self.current_frame)
-        grid_frame.place(anchor="c", relx=.5, rely=.5)
+        grid_frame.place(anchor="center", relx=.5, rely=.5)
 
 
         menu_frame.columnconfigure(0, weight=0)    # Timer
@@ -209,7 +197,6 @@ class SudokuView:
         """Callback wenn Zelle geändert wird"""
 
         def callback(event):
-            # entry = self.entries[row][col]
             entry = event.widget
 
             if not self.controller.on_cell_changed(row, col, entry.get()):
@@ -272,7 +259,6 @@ class SudokuView:
 
 
     def set_grid_values(self, difficulty):
-        #sudoku = self.controller.get_unsolved_sudoku()
         sudoku = self.controller.get_new_sudoku(difficulty)
         if sudoku is None:
             tk.messagebox.showerror("Fehler", "Die Erstellung eines neuen Sudokus ist leider fehlgeschlagen.\nJetzt wird das gespeicherte geladen.")
@@ -307,10 +293,10 @@ class SudokuView:
         return True
 
     def show_fail(self):
-        tk.messagebox.showerror("Das war leider falsch...")
+        tk.messagebox.showerror("Falsch", "Das war leider die falsche Zahl...")
 
     def show_loose(self):
-        tk.messagebox.showerror("Du hast leider verloren", "Loooooser")
+        tk.messagebox.showerror("Verloren!", "Du hast leider alle Leben verloren")
 
     def show_win(self):
-        tk.messagebox.showinfo("Du hast das Sudoku gelöst! Herzlichen Glückwunsch")
+        tk.messagebox.showinfo("Gewonnen!", "Du hast das Sudoku gelöst! Herzlichen Glückwunsch")

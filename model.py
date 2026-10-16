@@ -1,6 +1,5 @@
 import copy
 import random
-from re import fullmatch
 
 
 class SudokuModel:
@@ -17,8 +16,6 @@ class SudokuModel:
         # solang es nicht None ist, ist es gelöst
         if not self.solve_sudoku(self._sudoku) is None:
             self.print_sudoku(self._sudoku)
-
-
 
     def read_sudoku(self, file):
         sudoku_file =  open(file, 'r')
@@ -133,12 +130,7 @@ class SudokuModel:
         return new_sudoku
 
     def remove_numbers(self, sudoku, number_of_blank_fields):
-        # numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         for _ in range(number_of_blank_fields):
-            # random.shuffle(numbers)
-            # i = numbers[0]
-            # random.shuffle(numbers)
-            # j = numbers[0]
 
             i = random.randint(0, 8)
             j = random.randint(0, 8)
@@ -149,10 +141,6 @@ class SudokuModel:
 
             sudoku[i][j] = 0
         return sudoku
-
-    @property
-    def lives(self):
-        return self.lives
 
     @property
     def unsolved_sudoku(self):
