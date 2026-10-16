@@ -17,10 +17,6 @@ class SudokuModel:
         # Unsolved Sudoku für die Ausgabe in der GUI, _sudoku ist die "Lösung"
         self._unsolved_sudoku = copy.deepcopy(self._sudoku)
 
-        # solang es nicht None ist, ist es gelöst
-        if not self.solve_sudoku(self._sudoku) is None:
-            self.print_sudoku(self._sudoku)
-
     def read_sudoku(self, file):
         sudoku = []
         with open(file, 'r') as sudoku_file:
@@ -31,18 +27,6 @@ class SudokuModel:
                         row.append(int(number))
                 sudoku.append(row)
         self._sudoku = sudoku
-
-    def print_sudoku(self, sudoku):
-        for i in range(9):
-            if i % 3 == 0:
-                print("+-------+-------+-------+")
-            for j in range(9):
-                if j % 3 == 0:
-                    print("|", end=" ")
-                value = sudoku[i][j]
-                print(value, end=" ")
-            print("|")
-        print("+-------+-------+-------+")
 
     def is_valid(self, sudoku):
         for i in range(9):
@@ -101,14 +85,12 @@ class SudokuModel:
             case 3:
                 number_of_blank_fields = random.randint(45, 50)
 
-        print(f"leere Felder:{number_of_blank_fields}")
         full_sudoku = self.fill_sudoku(new_sudoku)
 
         if full_sudoku is None:
             return None
 
         self._sudoku = full_sudoku
-        self.print_sudoku(full_sudoku)
 
         finished_sudoku = self.remove_numbers(copy.deepcopy(full_sudoku), number_of_blank_fields)
 

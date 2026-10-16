@@ -66,12 +66,6 @@ class TestInitUndEinlesen:
         assert model.sudoku != puzzle
         assert model.sudoku[0][0] != 0
 
-    def test_print_sudoku_zeichnet_raster(self, model, capfd):
-        model.print_sudoku(SOLVED)
-        out = capfd.readouterr().out
-        assert "+-------+-------+-------+" in out
-        assert "| 5 3 4 | 6 7 8 | 9 1 2 |" in out
-
 
 class TestIsValid:
 

@@ -32,8 +32,6 @@ class SudokuView:
         self.empty_heart_icon = tk.PhotoImage(file=str(BASE_DIR / "images" / "leeres_Herz.png"))
         self.empty_heart_icon = self.empty_heart_icon.subsample(2, 2)
 
-        self.start_icon = tk.PhotoImage(file=str(BASE_DIR / "images" / "Start.png"))
-        self.start_icon = self.start_icon.subsample(2, 2)
         self.pause_icon = tk.PhotoImage(file=str(BASE_DIR / "images" / "Pause.png"))
         self.pause_icon = self.pause_icon.subsample(2, 2)
 

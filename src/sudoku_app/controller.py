@@ -12,7 +12,6 @@ class SudokuController:
         number = int(value) if value else 0
 
         sudoku = self.model.sudoku
-        self.model.print_sudoku(sudoku)
         if sudoku[row][col] == number or number == 0:
             return True
         else:
